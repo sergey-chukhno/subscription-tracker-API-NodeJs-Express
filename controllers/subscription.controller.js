@@ -1,4 +1,5 @@
 import Subscription from '../models/subscription.model.js';
+import { WorkflowClient } from '@upstash/workflow';
 
 export const createSubscription = async (req, res, next) => {
   try {
@@ -6,6 +7,10 @@ export const createSubscription = async (req, res, next) => {
       ...req.body,
       user: req.user._id,
     });
+    await workflowClient.trigger({
+      url: { SERVER_URL },
+      
+    })
     res.status(201).json({ success: true, data: subscription });
    }
   catch (error) { 
@@ -22,7 +27,7 @@ export const getUserSubscriptions = async (req, res, next) => {
     }
 
     const subscriptions = await Subscription.find({ user: req.params.id });
-    res.status(200).json({succes: true, data: subscriptions})
+    res.status(200).json({ succes: true, data: subscriptions })
    }
   catch (error) {
     next(error);
